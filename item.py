@@ -13,7 +13,7 @@ class Item(Resource):
     def find_by_name(cls, name):
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
-        query = "SELECT * FROM items WHERE name = ?"
+        query = "SELECT * FROM items WHERE item = ?"
         result = cursor.execute(query, (name,))
         row = result.fetchone()
         connection.close()
@@ -65,5 +65,10 @@ class Item(Resource):
 
 class ItemsList(Resource):
     def get(self):
-
+        connection = sqlite3.connect("data.db")
+        cursor = connection.cursor()
+        query = "SELECT * FROM items"
+        result = cursor.execute(query)
+        items = result.fetchall()
+        connection.close()
         return {"items": items}
