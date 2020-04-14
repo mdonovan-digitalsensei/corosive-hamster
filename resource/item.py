@@ -14,7 +14,7 @@ class Item(Resource):
     def get(self, name):
         item = ItemModel.find_by_name(name)
         if item:
-            return item
+            return item.json()
         return {"message": "Item not found"}, 404
 
     def post(self, name):
@@ -25,11 +25,12 @@ class Item(Resource):
             )
 
         data = Item.parser.parse_args()
-        item = {"name": name, "price": data["price"]}
-        #try:
-        ItemModel.insert(item)
-        #except:
+        item = ItemModel(name, data["price"])
+        # try:
+        item.insert()
+        # except:
         #    return {"message": "An error occured"}, 500
+        return item.json(), 201
 
         return item, 201
 
@@ -37,7 +38,7 @@ class Item(Resource):
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
         query = "DELETE FROM items WHERE item=?"
-        cursor.execute(query, (name, ))
+        cursor.execute(query, (name,))
         connection.commit()
         connection.close()
         return {"message": "Item deleted"}
@@ -47,13 +48,13 @@ class Item(Resource):
         data = Item.parser.parse_args()
 
         item = ItemModel.find_by_name(name)
-        updated_item = {"name": name, "price": data["price"]}
+        updated_item = ItemModel(name, data["price"])
 
         if item is None:
-            ItemModel.insert(updated_item)
+            updated_item.insert()
         else:
-            ItemModel.update(updated_item)
-        return updated_item
+            updated_item.update()
+        return updated_item.json()
 
 
 class ItemsList(Resource):
