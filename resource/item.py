@@ -32,8 +32,6 @@ class Item(Resource):
         #    return {"message": "An error occured"}, 500
         return item.json(), 201
 
-        return item, 201
-
     def delete(self, name):
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
